@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="kr">
+<head>
+<meta charset="UTF-8">
+<title>Default Rolling</title>
+<style type="text/css">
+#rolling {position:relative; padding:40px; display:inline-block; text-align:center;}
+#rolling .rolling_wrap {position:relative; width:158px; height:158px; display:inline-block; overflow:hidden;}
+#rolling .rolling_wrap .rolling_move {position:absolute; display:inline-block; top:0; left:0;}
+#rolling .rolling_wrap .rolling_move .rolling_object {float:left;display:inline-block; width:158px; height:158px;}
+#rolling .btn_prev {position:absolute; top:105px; left:10px; cursor:pointer;}
+#rolling .btn_next {position:absolute; top:105px; right:10px; cursor:pointer;}
+#rolling .btn_rolling_wrap {}
+#rolling .btn_rolling_wrap .button {width:12px; height:8px; display:inline-block;}
+#rolling .btn_rolling_wrap .out {background:url(http://img.moongori.com/_image/shop/detail/hot_brand/btn_rolling_out.gif) no-repeat center center;}
+#rolling .btn_rolling_wrap .over {background:url(http://img.moongori.com/_image/shop/detail/hot_brand/btn_rolling_over.gif) no-repeat center center;}
+</style>
+</head>
+<body>
+<div id="rolling">
+	<div class="rolling_wrap">
+		<div class="rolling_move">
+			<div class="rolling_object">
+				<img src="http://file.moongori.com/_data/product/201511/26/4f8e39a4b9e29e8fb8ee442966d841db.png" width="158" height="158">
+			</div>
+			<div class="rolling_object">
+				<img src="http://file.moongori.com/_data/product/201511/26/95830b3ddcd63593236d2b013ed9ddc3.png" width="158" height="158">
+			</div>
+			<div class="rolling_object">
+				<img src="http://file.moongori.com/_data/product/201511/27/79d8384eb9e84989286827ecc6b85e33.png" width="158" height="158">
+			</div>
+			<div class="rolling_object">
+				<img src="http://file.moongori.com/_data/product/201511/30/cdcde8968a9ec0a1a40fbf8aa60e15cc.png" width="158" height="158">
+			</div>
+			<div class="rolling_object">
+				<img src="http://file.moongori.com/_data/product/201511/26/4f8e39a4b9e29e8fb8ee442966d841db.png" width="158" height="158">
+			</div>
+			<div class="rolling_object">
+				<img src="http://file.moongori.com/_data/product/201511/30/408ed898c1dfd339e56394a45392d768.png" width="158" height="158">
+			</div>
+			<div class="rolling_object">
+				<img src="http://file.moongori.com/_data/product/201511/26/7df3449441f99fa9875ecf948fc244fd.png" width="158" height="158">
+			</div>
+		</div>
+	</div>
+
+	<div class="btn_prev"><img src="http://img.moongori.com/_image/shop/detail/hot_brand/btn_prev.gif"></div>
+	<div class="btn_next"><img src="http://img.moongori.com/_image/shop/detail/hot_brand/btn_next.gif"></div>
+
+	<div class="btn_rolling_wrap"></div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+$(function() {
+	$('#rolling').rolling();
+});
+
+(function($) {
+	$.fn.rolling = function() {
+		this.each(function() {
+			var rolling = new Rolling(this);
+		});
+		return this;
+	}
+}) (jQuery);
+
+function Rolling(selector) {
+	this.rollingMove = null;
+	this.rollingObject = null;
+	this.rollingBtn = null;
+	this.btnPrev = null;
+	this.btnNext = null;
+	this.loadingTimer = null;
+	
+	this.rollingObjectWidth = 0;
+	this.rollingObjectCount = 0;
+	
+	this.init(selector);
+	this.initEvent();
+}
+
+Rolling.prototype.init = function(selector) {
+	this.rollingMove = $(selector).find('.rolling_move');
+	this.rollingObject = $(selector).find('.rolling_object');
+	this.btnPrev = $(selector).find('.btn_prev');
+	this.btnNext = $(selector).find('.btn_next');
+	
+	this.rollingObjectWidth = this.rollingObject.width();
+	this.rollingObjectCount = this.rollingObject.length;
+	
+	//bottom circle button
+	this.rollingObject.each(function(index) {
+		$(this).append('<input type="hidden" name="number" value="'+index+'" />');
+		$(selector).find('.btn_rolling_wrap').append('<div class="button out"></div>');
+	});
+	
+	this.rollingBtn = $(selector).find('.btn_rolling_wrap .button');
+	
+	$(selector).find('.rolling_move').css('width', this.rollingObjectWidth*this.rollingObject.length+'px');
+	$(selector).find('.btn_rolling_wrap .button:first').addClass('over');
+
+	this.loadingTimer = setInterval(this.fnNext.bind(this), 7000);
+}			
+
+Rolling.prototype.initEvent = function() {
+	var objThis = this;
+	objThis.btnPrev.on('click', function() {
+		objThis.fnPrev();
+	});
+	objThis.btnNext.on('click', function() {
+		objThis.fnNext();
+	});
+	objThis.rollingBtn.on('click', function() {
+		objThis.fnRollingBtn(objThis.rollingBtn.index(this));
+	});
+}
+
+Rolling.prototype.fnPrev = function() {
+	if(this.rollingMove.is(":animated")) return;
+	clearInterval(this.loadingTimer);
+	this.loadingTimer = setInterval(this.fnNext.bind(this), 7000);
+	var thisObj = this;
+	
+	this.fnRollingBtnControl('prev');
+	
+	var tempObj = this.rollingMove.find('.rolling_object:last');
+	this.rollingMove.prepend(tempObj.clone());
+	
+	this.rollingMove.animate({"left":(0-this.rollingObjectWidth)+"px"}, 0, function() {});
+	this.rollingMove.animate({"left":"+="+this.rollingObjectWidth}, 500, function() {
+		tempObj.remove();
+	});
+}
+
+Rolling.prototype.fnNext = function() {
+	if(this.rollingMove.is(":animated")) return;
+	clearInterval(this.loadingTimer);
+	this.loadingTimer = setInterval(this.fnNext.bind(this), 7000);
+	var thisObj = this;
+
+	this.fnRollingBtnControl('next');
+	
+	var tempObj = this.rollingMove.find('.rolling_object:first');
+	this.rollingMove.append(tempObj.clone());
+
+	this.rollingMove.animate({"left":"-="+this.rollingObjectWidth}, 500, function() {
+		thisObj.rollingMove.animate({"left":"0px"}, 0, function() {});
+		tempObj.remove();
+	});
+}
+
+Rolling.prototype.fnRollingBtnControl = function(direct) {
+	var rollingControlNowNumber = parseInt(this.rollingMove.find('.rolling_object:first input[name=number]').val());
+	
+	if(direct == 'prev') {
+		if(!rollingControlNowNumber) rollingControlNowNumber = this.rollingObjectCount;
+		rollingControlNowNumber = rollingControlNowNumber - 1;
+	}
+	
+	if(direct == 'next') {
+		rollingControlNowNumber = rollingControlNowNumber + 1;
+		if(rollingControlNowNumber == this.rollingObjectCount) rollingControlNowNumber = 0;
+	}
+	
+	this.rollingBtn.removeClass('over');
+	this.rollingBtn.eq(rollingControlNowNumber).addClass('over');
+}
+
+Rolling.prototype.fnRollingBtn = function(index) {
+	if(this.rollingMove.is(":animated")) return;
+	clearInterval(this.loadingTimer);
+	this.loadingTimer = setInterval(this.fnPrev.bind(this), 7000);
+	var thisObj = this;
+	var rollingControlNowNumber = 0;
+	
+	this.rollingBtn.each(function(index) {
+		if($(this).hasClass('over')) rollingControlNowNumber = index;
+	});
+	var difference = index-rollingControlNowNumber;
+	if(difference == 0) return;
+	if(difference < 0) {//-prev
+		difference = Math.abs(difference);
+		var tempObj = this.rollingMove.find('.rolling_object:gt('+(this.rollingObjectCount - difference - 1)+')');
+		this.rollingMove.prepend(tempObj.clone());
+		
+		this.rollingMove.animate({"left":(0-this.rollingObjectWidth*difference)+"px"}, 0, function() {});
+		this.rollingMove.animate({"left":"+="+this.rollingObjectWidth*difference}, 500, function() {
+			tempObj.remove();
+		});
+	} else {//+next
+		var tempObj = this.rollingMove.find('.rolling_object:lt('+(difference)+')');
+		this.rollingMove.append(tempObj.clone());
+	
+		this.rollingMove.animate({"left":"-="+(this.rollingObjectWidth*difference)}, 500, function() {
+			thisObj.rollingMove.animate({"left":"0px"}, 0, function() {});
+			tempObj.remove();
+		});
+	}
+	
+	this.rollingBtn.removeClass('over');
+	this.rollingBtn.eq(index).addClass('over');
+}
+</script>
+</body>
+</html>

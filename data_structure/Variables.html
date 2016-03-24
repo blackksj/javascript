@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Javascript</title>
+</head>
+<body>
+<script>
+var num = 1;
+num = 3;
+
+var price = 1.5;
+var name = "GyuMin";
+var trueValue = true;
+var nullVar = null;
+var und;
+
+console.log("num: " + num);
+console.log("name: " + name);
+console.log("trueValue: " + trueValue);
+console.log("price: " + price);
+console.log("nullVar: " + nullVar);
+console.log("und: " + und);
+
+var myVariable = "전역";
+myOtherVariable = "전역";
+
+function myFunction() {
+	var myVariable = "지역";
+	return myVariable;
+}
+
+function myOtherFunction() {
+	myOtherVariable = "지역";
+	return myOtherVariable;
+}
+
+console.log(myVariable);
+console.log(myFunction());
+
+console.log(myOtherVariable);
+console.log(myOtherFunction());
+console.log(myOtherVariable);
+</script>
+</body>
+</html>

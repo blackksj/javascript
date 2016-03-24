@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Javascript</title>
+</head>
+<body>
+<script>
+//Object is always true
+function testTruthy (val) {
+	return val ? console.log("truthy") : console.log("falsy");
+}
+
+testTruthy(true);
+testTruthy(false);
+testTruthy(new Boolean(false));
+
+testTruthy("");
+testTruthy("GyuMin");
+testTruthy(new String(""));
+
+testTruthy(1);
+testTruthy(-1);
+testTruthy(NaN);
+testTruthy(new Number(NaN));
+
+testTruthy({});
+
+var obj = {
+	name: "John"		
+};
+
+testTruthy(obj);
+testTruthy(obj.name);
+testTruthy(obj.age);
+</script>
+</body>
+</html>

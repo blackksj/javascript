@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Javascript</title>
+</head>
+<body>
+<script>
+function printArray (myArray) {
+	for (var i=0; i<myArray.length; i++) {
+		console.log(myArray[i]);
+	}
+}
+
+var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+//add number in array
+numbers[numbers.length] = 10;
+numbers.push(11);
+numbers.push(12, 13);
+
+console.log(numbers);
+
+numbers.unshift(-2);
+
+console.log(numbers);
+
+numbers.unshift(-4, -3);
+
+console.log(numbers);
+
+numbers.pop();
+
+console.log(numbers);
+
+console.log(numbers.length);
+
+numbers.splice(5, 3);
+
+console.log(numbers);
+
+numbers.splice(5,0,2,3,4);
+
+console.log(numbers);
+
+numbers.splice(5,3,2,3,4);
+
+console.log(numbers);
+</script>
+</body>
+</html>
